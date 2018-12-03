@@ -15,3 +15,8 @@ mvn clean package
 mvn appengine:devserver
 
 (specify testing port in pom.xml plugin appengine-maven-plugin)
+
+- To deploy:
+mvn appengine:update
+Then go to:
+http://your-appengine-property-id.appspot.com
