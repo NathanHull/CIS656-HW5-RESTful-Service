@@ -7,8 +7,8 @@
   <title>Server Engine Standard Java 8</title>
 </head>
 <body>
-    <h1>Server Engine -- Java 8!</h1>
+  <h1>Server Engine -- Java 8!</h1>
 
-  <p>Running Server.</p>
+  <a href="widgets">Widgets</a>
 </body>
 </html>

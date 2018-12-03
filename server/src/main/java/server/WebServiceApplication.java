@@ -65,7 +65,7 @@ public class WebServiceApplication extends Application {
 
 			}
 		};
-		router.attach("", mainpage);
+		router.attach("/", mainpage);
 		return router;
 	}
 
