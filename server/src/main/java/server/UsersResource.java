@@ -23,11 +23,8 @@ public class UsersResource extends ServerResource {
 
 	@Override
 	public void doInit() {
-    this.users = ObjectifyService.ofy()
-        .load()
-        .type(User.class)
-        .list();
-
+		this.users = ObjectifyService.ofy().load().type(User.class).list();
+		
 		// representation types this resource can use to describe
 		getVariants().add(new Variant(MediaType.TEXT_HTML));
 		getVariants().add(new Variant(MediaType.APPLICATION_JSON));
