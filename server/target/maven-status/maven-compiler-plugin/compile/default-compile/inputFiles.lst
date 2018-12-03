@@ -1,8 +1,6 @@
 /Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/PresenceService.java
-/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/IPresenceService.java
-/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/WidgetsResource.java
-/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/WidgetResource.java
-/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/RegistrationInfo.java
+/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/UsersResource.java
+/Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/UserResource.java
 /Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/ErrorMessage.java
 /Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/User.java
 /Users/nathan/Documents/GVSU5S2/CIS656 Distributed Computing/Lab5-RESTful-Service/server/src/main/java/server/OfyHelper.java

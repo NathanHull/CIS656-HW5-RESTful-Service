@@ -87,8 +87,8 @@ public class UserResource extends ServerResource {
 				Form form = new Form(entity);
 				this.user.setUserName(form.getFirstValue("userName"));
 				this.user.setHost(form.getFirstValue("host"));
-				this.user.setPort(form.getFirstValue("port"));
-				this.user.setStatus(form.getFirstValue("status"));
+				this.user.setPort(Integer.parseInt(form.getFirstValue("port")));
+				this.user.setStatus(Boolean.getBoolean(form.getFirstValue("status")));
 
         		ObjectifyService.ofy().save().entity(this.user).now();
 				getResponse().setStatus(Status.SUCCESS_OK);
@@ -108,7 +108,7 @@ public class UserResource extends ServerResource {
 	/**
 	 * Handle a DELETE Http Request. Delete an existing user
 	 *
-	 * @param entity
+	 * @param variant
 	 * @throws ResourceException
 	 */
 	@Delete
@@ -124,20 +124,22 @@ public class UserResource extends ServerResource {
 				getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 				return rep;
 			}
-      	try {
-      		rep = new JsonRepresentation(this.user.toJSON());
+			try {
+				rep = new JsonRepresentation(this.user.toJSON());
 
-			// remove from persistance layer
-			ObjectifyService.ofy().delete().entity(this.user);
-		} finally {
-			getResponse().setStatus(Status.SUCCESS_OK);
-		} catch (Exception e) {
+				// remove from persistance layer
+				ObjectifyService.ofy().delete().entity(this.user);
+			} finally {
+				getResponse().setStatus(Status.SUCCESS_OK);
+			}
+		}
+		catch (Exception e) {
 			getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
 		}
 		return rep;
 	}
 
-	
+
 	/**
 	 * Represent an error message in the requested format.
 	 *

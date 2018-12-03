@@ -46,21 +46,25 @@ public class UsersResource extends ServerResource {
 			return representError(variant, em);
 		} else {
 			if (variant.getMediaType().equals(MediaType.APPLICATION_JSON)) {
-				JSONArray widgetArray = new JSONArray();
+				JSONArray userArray = new JSONArray();
 				for(User o : this.users) {
-					widgetArray.put(o.toJSON());
+					userArray.put(o.toJSON());
 				}
 
-				result = new JsonRepresentation(widgetArray);
+				result = new JsonRepresentation(userArray);
 			} else {
-				// create a plain text representation of our list of widgets
+				// create a plain text representation of our list of users
 				StringBuffer buf = new StringBuffer("<html><head><title>User Resources</title><head><body><h1>User Resources</h1>");
 				buf.append("<form name=\"input\" action=\"/users\" method=\"POST\">");
 				buf.append("User name: ");
 				buf.append("<input type=\"text\" userName=\"User Name\" />");
+				buf.append("<br/>Host Address: ");
 				buf.append("<input type=\"text\" host=\"Host Address\" />");
+				buf.append("<br/>Port: ");
 				buf.append("<input type=\"text\" port=\"Port\" />");
+				buf.append("<br/>Available: ");
 				buf.append("<input type=\"checkbox\" status=\"Available\" />");
+				buf.append("<br/>");
 				buf.append("<input type=\"submit\" value=\"Create\" />");
 				buf.append("</form>");
 				buf.append("<br/><h2> There are " + this.users.size() + " users.</h2>");
