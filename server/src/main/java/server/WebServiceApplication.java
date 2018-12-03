@@ -11,12 +11,6 @@ import org.restlet.Request;
 import org.restlet.Response;
 
 
-/**
- * This class defines our Application object and starts up a standard-alone HTTP server to processes
- * incoming HTTP requests.
- * @author Jonathan Engelsma (http://themobilemontage.com)
- *
- */
 public class WebServiceApplication extends Application {
 
 

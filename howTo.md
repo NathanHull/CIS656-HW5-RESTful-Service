@@ -29,4 +29,4 @@ Client
 mvn clean compile assembly:single
 
 - To run:
-java -jar client-jar-with-dependencies.jar
+java -jar client-1.0-SNAPSHOT-jar-with-dependencies.jar

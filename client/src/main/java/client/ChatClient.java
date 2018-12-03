@@ -1,4 +1,4 @@
-package edu.gvsu.restapi.client;
+package client;
 
 import java.io.IOException;
 import org.json.JSONException;
@@ -8,12 +8,8 @@ import org.restlet.data.*;
 import org.restlet.*;
 import org.restlet.representation.Representation;
 
-/**
- * Sample client program that uses the RESTlet framework to access a RESTful web service.
- * @author Jonathan Engelsma (http://themobilemontage.com)
- *
- */
-public class SampleRESTClient
+
+public class ChatClient
 {
 
 	// The base URL for all requests.
@@ -44,7 +40,6 @@ public class SampleRESTClient
 	    try {
 			System.out.println(responseData.getText());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
