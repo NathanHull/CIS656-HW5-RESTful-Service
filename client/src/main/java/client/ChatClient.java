@@ -21,10 +21,10 @@ public class ChatClient
 		// EXAMPLE HTTP REQUEST #1 - Let's create a new widget!
 		// This is how you create a www form encoded entity for the HTTP POST request.
 	    Form form = new Form();
-	    form.add("name","A brand new cool widget!");
+	    form.add("name","New User!");
 
 	    // construct request to create a new widget resource
-	    String widgetsResourceURL = APPLICATION_URI + "/widgets";
+	    String widgetsResourceURL = APPLICATION_URI + "/users";
 	    Request request = new Request(Method.POST,widgetsResourceURL);
 
 	    // set the body of the HTTP POST command with form data.

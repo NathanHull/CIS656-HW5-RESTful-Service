@@ -17,42 +17,29 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Key;
 
 
-/**
- * Represents a collection of widgets.  This resource processes HTTP requests that come in on the URIs
- * in the form of:
- *
- * http://host:port/widgets/{id}
- *
- * This resource supports both HTML and JSON representations.
- *
- * @author Jonathan Engelsma (http://themobilemontage.com)
- *
- */
-public class WidgetResource extends ServerResource {
+public class UserResource extends ServerResource {
 
-	private Widget widget = null;
+	private User user = null;
+
 
 	@Override
 	public void doInit() {
+		// URL requests routed to this resource should include userName
+		String userName = null;
+		userName = (String) getRequest().getAttributes().get("userName");
 
-		// URL requests routed to this resource have the widget id on them.
-		String widgetid = null;
-		widgetid = (String) getRequest().getAttributes().get("id");
+		// lookup the user in google's persistance layer.
+    	Key<User> key = Key.create(User.class, Long.valueOf(userName));
+    	this.user = ObjectifyService.ofy().load().key(key).now();
 
-		// lookup the widget in google's persistance layer.
-    Key<Widget> theKey = Key.create(Widget.class, Long.valueOf(widgetid));
-    this.widget = ObjectifyService.ofy()
-        .load()
-        .key(theKey)
-        .now();
-
-		// these are the representation types this resource supports.
+		// supported representation types
 		getVariants().add(new Variant(MediaType.TEXT_HTML));
 		getVariants().add(new Variant(MediaType.APPLICATION_JSON));
 	}
 
+
 	/**
-	 * Represent the widget object in the requested format.
+	 * Represent the user object in the requested format.
 	 *
 	 * @param variant
 	 * @return
@@ -61,22 +48,23 @@ public class WidgetResource extends ServerResource {
 	@Get
 	public Representation get(Variant variant) throws ResourceException {
 		Representation result = null;
-		if (null == this.widget) {
+		if (null == this.user) {
 			ErrorMessage em = new ErrorMessage();
 			return representError(variant, em);
 		} else {
 			if (variant.getMediaType().equals(MediaType.APPLICATION_JSON)) {
-				result = new JsonRepresentation(this.widget.toJSON());
+				result = new JsonRepresentation(this.user.toJSON());
 			} else {
-				result = new StringRepresentation(this.widget.toHtml(false));
+				result = new StringRepresentation(this.user.toHtml(false));
 				result.setMediaType(MediaType.TEXT_HTML);
 			}
 		}
 		return result;
 	}
 
+
 	/**
-	 * Handle a PUT Http request. Update an existing widget
+	 * Handle a PUT Http request. Update an existing user
 	 *
 	 * @param entity
 	 * @throws ResourceException
@@ -87,7 +75,7 @@ public class WidgetResource extends ServerResource {
 	{
 		Representation rep = null;
 		try {
-			if (null == this.widget) {
+			if (null == this.user) {
 				ErrorMessage em = new ErrorMessage();
 				rep = representError(entity.getMediaType(), em);
 				getResponse().setEntity(rep);
@@ -97,16 +85,14 @@ public class WidgetResource extends ServerResource {
 			if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM,
 					true)) {
 				Form form = new Form(entity);
-				this.widget.setName(form.getFirstValue("name"));
+				this.user.setUserName(form.getFirstValue("userName"));
+				this.user.setHost(form.getFirstValue("host"));
+				this.user.setPort(form.getFirstValue("port"));
+				this.user.setStatus(form.getFirstValue("status"));
 
-        // persist object
-        ObjectifyService.ofy()
-            .save()
-            .entity(this.widget)
-            .now();
-
+        		ObjectifyService.ofy().save().entity(this.user).now();
 				getResponse().setStatus(Status.SUCCESS_OK);
-				rep = new JsonRepresentation(this.widget.toJSON());
+				rep = new JsonRepresentation(this.user.toJSON());
 				getResponse().setEntity(rep);
 
 			} else {
@@ -118,38 +104,32 @@ public class WidgetResource extends ServerResource {
 		return rep;
 	}
 
+
 	/**
-	 * Handle a DELETE Http Request. Delete an existing widget
+	 * Handle a DELETE Http Request. Delete an existing user
 	 *
 	 * @param entity
 	 * @throws ResourceException
 	 */
 	@Delete
 	public Representation delete(Variant variant)
-		throws ResourceException
+	throws ResourceException
 	{
 		Representation rep = null;
 		try {
-			if (null == this.widget) {
+			if (null == this.user) {
 				ErrorMessage em = new ErrorMessage();
 				rep = representError(MediaType.APPLICATION_JSON, em);
 				getResponse().setEntity(rep);
 				getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 				return rep;
 			}
+      	try {
+      		rep = new JsonRepresentation(this.user.toJSON());
 
-      try {
-      	rep = new JsonRepresentation(this.widget.toJSON());
-
-        // remove from persistance layer
-        ObjectifyService.ofy()
-            .delete()
-            .entity(this.widget);
-
-      } finally {
-
-      }
-
+			// remove from persistance layer
+			ObjectifyService.ofy().delete().entity(this.user);
+		} finally {
 			getResponse().setStatus(Status.SUCCESS_OK);
 		} catch (Exception e) {
 			getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
@@ -157,6 +137,7 @@ public class WidgetResource extends ServerResource {
 		return rep;
 	}
 
+	
 	/**
 	 * Represent an error message in the requested format.
 	 *
