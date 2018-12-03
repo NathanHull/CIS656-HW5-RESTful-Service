@@ -53,10 +53,10 @@ public class WebServiceApplication extends Application {
 
 				stringBuilder.append("<html>");
 				stringBuilder
-				.append("<head><title>Sample Application Default Page</title></head>");
+				.append("<head><title>Webserver Index</title></head>");
 				stringBuilder.append("<body bgcolor=white>");
-				stringBuilder.append("<h1>I am an example webserver that supports RESTful web services</h1>");
-				stringBuilder.append("Click <a href=\"/widgets\">here</a> to see all my widgets.");
+				stringBuilder.append("<h1>Webserver serving RESTful web services</h1>");
+				stringBuilder.append("<a href=\"/widgets\">Widgets</a>");
 				stringBuilder.append("</body>");
 				stringBuilder.append("</html>");
 
