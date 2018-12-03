@@ -4,7 +4,7 @@
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <groupId>chatserver</groupId>
+  <groupId>cis656</groupId>
   <artifactId>chatserver</artifactId>
 
   <properties>
@@ -14,7 +14,19 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <archiveClasses>true</archiveClasses>
+
+	<guava.version>18.0</guava.version>
+	<objectify.version>5.1.5</objectify.version>
+	<gae.version>1.9.69</gae.version>
+	<restlet.version>2.3.12</restlet.version>
   </properties>
+  <repositories>
+	  <repository>
+		  <id>maven-restlet</id>
+		  <name>Public online Restlet repostiory</name>
+		  <url>http://maven.restlet.com</url>
+	  </repository>
+  </repositories>
 
   <prerequisites>
     <maven>3.5</maven>
@@ -25,7 +37,7 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.8</version>
+	  <version>${gae.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -40,24 +52,60 @@
       <version>1.2</version>
     </dependency>
 
+
+	<!-- Objectify Dependencies -->
+	<dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>${guava.version}</version>
+	</dependency>
+	<dependency>
+          <groupId>com.googlecode.objectify</groupId>
+          <artifactId>objectify</artifactId>
+          <version>${objectify.version}</version>
+	</dependency>
+
+	<!-- Restlet Dependencies -->
+    <dependency>
+	        <groupId>org.restlet.gae</groupId>
+		    <artifactId>org.restlet</artifactId>
+			<version>${restlet.version}</version>
+		</dependency>
+    <dependency>
+	        <groupId>org.restlet.gae</groupId>
+		    <artifactId>org.restlet.ext.gae</artifactId>
+			<version>${restlet.version}</version>
+		</dependency>
+    <dependency>
+        <groupId>org.restlet.gae</groupId>
+        <artifactId>org.restlet.ext.servlet</artifactId>
+		<version>${restlet.version}</version>
+		</dependency>
+    <dependency>
+        <groupId>org.restlet.gae</groupId>
+        <artifactId>org.restlet.ext.json</artifactId>
+		<version>${restlet.version}</version>
+	</dependency>
+
+
     <!-- Test Dependencies -->
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-testing</artifactId>
-      <version>1.8</version>
+	  <version>${gae.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-stubs</artifactId>
-      <version>1.8</version>
+	  <version>${gae.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-tools-sdk</artifactId>
-      <version>1.8</version>
+	  <version>${gae.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -89,7 +137,7 @@
       <plugin>
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>1.9.69</version>
         <configuration>
           <appId>chatserver-224403</appId> <!-- Override appengine-web.xml <project> -->
           <version>1</version>
