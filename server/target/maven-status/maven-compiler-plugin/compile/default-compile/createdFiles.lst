@@ -1,7 +1,5 @@
-server/WebServiceApplication$1.class
 server/Widget.class
 server/WidgetsResource.class
 server/WidgetResource.class
 server/OfyHelper.class
 server/ErrorMessage.class
-server/WebServiceApplication.class

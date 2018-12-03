@@ -11,7 +11,7 @@ import org.restlet.Request;
 import org.restlet.Response;
 
 
-public class WebServiceApplication extends Application {
+public class PresenceService extends Application {
 
 
 	public static void main(String[] args) throws Exception {
@@ -20,7 +20,7 @@ public class WebServiceApplication extends Application {
 		Component component = new Component();
 		component.getServers().add(Protocol.HTTP, 8100);
 
-		WebServiceApplication application = new WebServiceApplication();
+		PresenceService application = new PresenceService();
 
 		// Attach the application to the component and start it
 		component.getDefaultHost().attach(application);
@@ -30,7 +30,7 @@ public class WebServiceApplication extends Application {
 	/**
 	 * Constructor to create a WebServiceApplication instance.
 	 */
-	public WebServiceApplication() {
+	public PresenceService() {
 		super();
 	}
 
