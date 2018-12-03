@@ -8,6 +8,8 @@
 	- Configure deployment in src/main/webapp/WEB-INF/web.xml
 	- Documentation: https://cloud.google.com/appengine/docs/standard/java/config/appref
 
+
+AppEngine Server
 - To build:
 mvn clean package
 
@@ -20,3 +22,11 @@ mvn appengine:devserver
 mvn appengine:update
 Then go to:
 http://your-appengine-property-id.appspot.com
+
+
+Client
+- To build:
+mvn clean compile assembly:single
+
+- To run:
+java -jar client-jar-with-dependencies.jar
