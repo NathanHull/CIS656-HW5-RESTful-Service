@@ -98,27 +98,37 @@ public class UsersResource extends ServerResource {
 					true))
 			{
 				Form form = new Form(entity);
+
+				for (User u : users) {
+					if (u.getUserName().equals(form.getFirstValue("userName"))) {
+						getResponse().setStatus(Status.CLIENT_ERROR_CONFLICT);
+						return null;
+					}
+				}
+
 				User u = new User();
 				u.setUserName(form.getFirstValue("userName"));
-				System.out.println(u.getUserName());
 				u.setHost(form.getFirstValue("host"));
-				System.out.println("Host");
 				String port = form.getFirstValue("port");
-				System.out.println("Got port at leaset:" + port);
 				u.setPort(Integer.parseInt(port));
-				System.out.println("Port");
 				u.setStatus(Boolean.getBoolean(form.getFirstValue("status")));
-				System.out.println("before save");
         		ObjectifyService.ofy().save().entity(u).now();
 
 				getResponse().setStatus(Status.SUCCESS_OK);
 				rep = new StringRepresentation(u.toHtml(false));
 				rep.setMediaType(MediaType.TEXT_HTML);
-				System.out.println("Before response");
 				getResponse().setEntity(rep);
 
 			} else if (entity.getMediaType().equals(MediaType.APPLICATION_JSON)) {
 				JSONObject json = new JSONObject(entity);
+
+				for (User u : users) {
+					if (u.getUserName().equals(json.getString("userName"))) {
+						getResponse().setStatus(Status.CLIENT_ERROR_CONFLICT);
+						return null;
+					}
+				}
+
 				User u = new User();
 				u.setUserName(json.getString("userName"));
 				u.setHost(json.getString("host"));
