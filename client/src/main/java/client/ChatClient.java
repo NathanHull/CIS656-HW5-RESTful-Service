@@ -1,9 +1,11 @@
 package client;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.Socket;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ public class ChatClient
 	public ChatClient() {}
 
     public static void main(String args[]) {
+
+
+		// Get args for username and ports
 		if (args.length != 3) {
 			System.err.println("Input error: ./exe userName serverPort recvPort");
 			System.exit(1);
@@ -51,50 +56,7 @@ public class ChatClient
 		System.out.println("Your receiving address: " + client.host + ":" + client.port);
 
 
-		// // Invoke the client HTTP connector to send the POST request to the server.
-		// Request request;
-	    // Response resp = new Client(Protocol.HTTP).handle(request);
-
-	    // // now, let's check what we got in response.
-	    // System.out.println(resp.getStatus());
-	    // Representation responseData = resp.getEntity();
-	    // try {
-		// 	System.out.println(responseData.getText());
-		// } catch (IOException e) {
-		// 	e.printStackTrace();
-		// }
-
-		// // EXAMPLE HTTP REQUEST #2
-		// // Let's do an HTTP GET of widget 1 and ask for JSON response.
-		// widgetsResourceURL = APPLICATION_URI + "/widgets/5066549580791808";
-	    // request = new Request(Method.GET,widgetsResourceURL);
-
-	    // // We need to ask specifically for JSON
-        // request.getClientInfo().getAcceptedMediaTypes().
-        // add(new Preference(MediaType.APPLICATION_JSON));
-
-	    // // Now we do the HTTP GET
-	    // System.out.println("Sending an HTTP GET to " + widgetsResourceURL + ".");
-		// resp = new Client(Protocol.HTTP).handle(request);
-
-		// // Let's see what we got!
-		// if(resp.getStatus().equals(Status.SUCCESS_OK)) {
-		// 	responseData = resp.getEntity();
-		// 	System.out.println("Status = " + resp.getStatus());
-		// 	try {
-		// 		String jsonString = responseData.getText().toString();
-		// 		System.out.println("result text=" + jsonString);
-		// 		JSONObject jObj = new JSONObject(jsonString);
-		// 		System.out.println("id=" + jObj.getInt("id") + " name=" + jObj.getString("name"));
-		// 	} catch (IOException e) {
-		// 		// TODO Auto-generated catch block
-		// 		e.printStackTrace();
-		// 	} catch (JSONException je) {
-		// 		je.printStackTrace();
-		// 	}
-		// }
-
-
+		// Client closeables
 		Scanner scanner = new Scanner(System.in);
 		ServerSocket receiveSocket = null;
 		try {
@@ -106,9 +68,21 @@ public class ChatClient
 		Thread acceptThread = new Thread(new ProcessIncomingRequest(receiveSocket));
 		acceptThread.start();
 
-		client.register();
+		
+		// Server registration
+		if (!client.register()) {
+			System.out.println("Username already taken");
+			System.exit(0);
+		}
+
 		System.out.println();
 		
+		
+		// Stub in case user gets left registered
+		// Request request = new Request(Method.DELETE,usersResourceURL + "/hulln");
+		// Response resp = new Client(Protocol.HTTP).handle(request);
+		// System.out.println(resp.getStatus());
+
 
 		// Main program loop
 		while (true) {
@@ -142,46 +116,95 @@ public class ChatClient
 					}
 					System.out.println();
 					break;
+
 				case 1:
-					// System.out.println("Talk: to who?");
-					// scanner.nextLine();
-					// String targetUserName = scanner.nextLine();
-					// RegistrationInfo targetRI = service.lookup(targetUserName);
+					System.out.println("Talk: to who?");
+					scanner.nextLine();
+					String targetUserName = scanner.nextLine();
+					JSONObject target = client.getUser(targetUserName);
 
-					// if (targetRI == null) {
-					// 	System.out.println("User does not exist");
-					// } else if (targetRI.getStatus()) {
-					// 	String message = scanner.nextLine();
+					try {
+						target.getString("userName");
+					} catch (JSONException e) {
+						target = null;
+					}
 
-					// 	Socket socket = new Socket(targetRI.getHost(), targetRI.getPort());
-					// 	new PrintStream(socket.getOutputStream()).println(message);
-					// 	socket.close();
-					// } else if (!targetRI.getStatus()) {
-					// 	System.out.println("User busy");
-					// }
+					if (target == null) {
+						System.out.println("User does not exist");
+					} else if (target.getBoolean("status")) {
+						String message = scanner.nextLine();
+						Socket socket = null;
+
+						try {
+							socket = new Socket (target.getString("host"), target.getInt("port"));
+						} catch (UnknownHostException e) {
+							System.out.println("Host not found");
+							break;
+						} catch (IOException e) {
+							System.err.println("IO Exception on socket");
+							break;
+						}
+
+						try {
+							new PrintStream(socket.getOutputStream()).println(message);
+						} catch (IOException e) {
+							System.err.println("IO Error");
+						}
+
+						try {
+							socket.close();
+						} catch (IOException e) {
+							System.err.println("Error closing send socket");
+						}
+					} else if (!target.getBoolean("status")) {
+						System.out.println("User busy");
+					}
 					break;
+
 				case 2:
-					// System.out.println("Broadcast: message?");
-					// scanner.nextLine();
-					// String message = scanner.nextLine();
+					System.out.println("Broadcast message?");
+					scanner.nextLine();
+					String message = scanner.nextLine();
 
-					// Vector<RegistrationInfo> targetRIs = service.listRegisteredUsers();
-					// for (RegistrationInfo RI : targetRIs) {
-					// 	if (RI.getStatus() && !RI.getUserName().equals(userName)) {
-					// 		Socket socket = new Socket(RI.getHost(), RI.getPort());
-					// 		new PrintStream(socket.getOutputStream()).println(message);
-					// 		socket.close();
-					// 	}
-					// }
+					ArrayList<JSONObject> targets = client.getUsers();
+					for (JSONObject t : targets) {
+						if (t.getBoolean("status") && !t.getString("userName").equals(client.userName)) {
+							Socket socket = null;
+							try {
+								socket = new Socket(t.getString("host"), t.getInt("port"));
+							} catch (UnknownHostException e) {
+								System.out.println("Unknown host");
+								continue;
+							} catch (IOException e) {
+								System.err.println("Socket IO exception");
+								break;
+							}
+
+							try {
+								new PrintStream(socket.getOutputStream()).println(message);
+							} catch (IOException e) {
+								System.err.println("PrintStream error");
+							}
+							
+							try {
+								socket.close();
+							} catch (IOException e) {
+								System.err.println("Error closing socket");
+							}
+						}
+					}
 					break;
+					
 				case 3:
-					// System.out.println("Setting status as busy");
-					// service.updateRegistrationInfo(new RegistrationInfo(userName, host, port, false));
+					System.out.println("Setting status as busy");
+					client.updateUser(client.userName, client.host, client.port, false);
 					break;
+
 				case 4:
-					// System.out.println("Setting status as available");
-					// service.updateRegistrationInfo(new RegistrationInfo(userName, host, port, true));
+				System.out.println("Setting status as available");
+				client.updateUser(client.userName, client.host, client.port, true);
 					break;
+
 				case 5:
 					client.unregister();
 					try {
@@ -191,14 +214,16 @@ public class ChatClient
 					}
 					scanner.close();
 					System.exit(0);
+
 				default:
 					System.out.println("Invalid input");
 					break;
+
 			}
 		}
 	}
 	
-	void register() {
+	boolean register() {
 		Form form = new Form();
 		form.add("userName", userName);
 		form.add("host", host);
@@ -208,13 +233,15 @@ public class ChatClient
 		Request request = new Request(Method.POST, usersResourceURL);
 		request.setEntity(form.getWebRepresentation());
 		Response resp = new Client(Protocol.HTTP).handle(request);
-		System.out.println(resp.getStatus());
+		System.out.println("\n" + resp.getStatus());
+
+		return resp.getStatus().getCode() == 200;
 	}
 
 	void unregister() {
 		Request request = new Request(Method.DELETE,usersResourceURL + "/" + userName);
 		Response resp = new Client(Protocol.HTTP).handle(request);
-		System.out.println(resp.getStatus());
+		System.out.println("\n" + resp.getStatus());
 	}
 
 	ArrayList<JSONObject> getUsers() {
@@ -223,7 +250,7 @@ public class ChatClient
 		Response resp = new Client(Protocol.HTTP).handle(request);
 		JSONArray ja = new JSONArray(resp.getEntityAsText());
 
-		System.out.println(resp.getStatus());
+		System.out.println("\n" + resp.getStatus());
 		ArrayList<JSONObject> list = new ArrayList<JSONObject>();
 		if (ja != null) {
 			for (int i = 0; i < ja.length(); i++) {
@@ -233,7 +260,24 @@ public class ChatClient
 		return list;
 	}
 
-	// User getUser() {
+	JSONObject getUser(String target) {
+		Request request = new Request(Method.GET, usersResourceURL + "/" + target);
+		request.getClientInfo().getAcceptedMediaTypes().add(new Preference(MediaType.APPLICATION_JSON));
+		Response resp = new Client(Protocol.HTTP).handle(request);
+		System.out.println("\n" + resp.getStatus());
+		return new JSONObject(resp.getEntityAsText());
+	}
 
-	// }
+	void updateUser(String userName, String host, int port, boolean status) {
+		Form form = new Form();
+		form.add("userName", userName);
+		form.add("host", host);
+		form.add("port", ""+port);
+		form.add("status", ""+status);
+
+		Request request = new Request(Method.PUT, usersResourceURL + "/" + userName);
+		request.setEntity(form.getWebRepresentation());
+		Response resp = new Client(Protocol.HTTP).handle(request);
+		System.out.println("\n" + resp.getStatus());
+	}
 }
