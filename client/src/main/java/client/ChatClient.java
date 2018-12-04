@@ -69,6 +69,12 @@ public class ChatClient
 		acceptThread.start();
 
 		
+		// Stub in case user gets left registered
+		// Request request = new Request(Method.DELETE,usersResourceURL + "/brah");
+		// Response resp = new Client(Protocol.HTTP).handle(request);
+		// System.out.println(resp.getStatus());
+
+
 		// Server registration
 		if (!client.register()) {
 			System.out.println("Username already taken");
@@ -76,12 +82,6 @@ public class ChatClient
 		}
 
 		System.out.println();
-		
-		
-		// Stub in case user gets left registered
-		// Request request = new Request(Method.DELETE,usersResourceURL + "/hulln");
-		// Response resp = new Client(Protocol.HTTP).handle(request);
-		// System.out.println(resp.getStatus());
 
 
 		// Main program loop
