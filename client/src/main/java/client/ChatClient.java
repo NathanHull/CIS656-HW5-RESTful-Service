@@ -112,7 +112,7 @@ public class ChatClient
 
 		// Main program loop
 		while (true) {
-			System.out.println("\n----------\n0: friends\n1: talk\n2: broadcast\n3: busy\n4: available\n5: exit\n");
+			System.out.println("\n=========\n0: friends\n1: talk\n2: broadcast\n3: busy\n4: available\n5: exit\n");
 			int userChoice = 6;
 			try {
 				userChoice = scanner.nextInt();
@@ -207,6 +207,8 @@ public class ChatClient
 
 		Request request = new Request(Method.POST, usersResourceURL);
 		request.setEntity(form.getWebRepresentation());
+		Response resp = new Client(Protocol.HTTP).handle(request);
+		System.out.println(resp.getStatus());
 	}
 
 	void unregister() {
