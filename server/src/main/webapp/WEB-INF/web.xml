@@ -8,7 +8,7 @@
     <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
     <init-param>
       <param-name>org.restlet.application</param-name>
-      <param-value>server.PresenceService</param-value>
+      <param-value>server.Server</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>

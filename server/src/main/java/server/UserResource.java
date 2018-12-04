@@ -1,6 +1,6 @@
 package server;
 
-import java.util.List;
+import org.json.JSONObject;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -29,7 +29,7 @@ public class UserResource extends ServerResource {
 		userName = (String) getRequest().getAttributes().get("userName");
 
 		// lookup the user in google's persistance layer.
-    	Key<User> key = Key.create(User.class, Long.valueOf(userName));
+    	Key<User> key = Key.create(User.class, userName);
     	this.user = ObjectifyService.ofy().load().key(key).now();
 
 		// supported representation types
@@ -95,6 +95,19 @@ public class UserResource extends ServerResource {
 				rep = new JsonRepresentation(this.user.toJSON());
 				getResponse().setEntity(rep);
 
+			} else if (entity.getMediaType().equals(MediaType.APPLICATION_JSON)) {
+				JSONObject json = new JSONObject(entity);
+				User u = new User();
+				u.setUserName(json.getString("userName"));
+				u.setHost(json.getString("host"));
+				u.setPort(json.getInt("port"));
+				u.setStatus(json.getBoolean("status"));
+        		ObjectifyService.ofy().save().entity(u).now();
+
+				getResponse().setStatus(Status.SUCCESS_OK);
+				rep = new StringRepresentation(u.toJSON().toString());
+				rep.setMediaType(MediaType.APPLICATION_JSON);
+				getResponse().setEntity(rep);
 			} else {
 				getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 			}

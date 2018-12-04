@@ -1,7 +1,9 @@
 package server;
 
 import java.util.List;
+
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -32,7 +34,7 @@ public class UsersResource extends ServerResource {
 
 
 	/**
-	 * Handle an HTTP GET. Represent the user object in the requested format.
+	 * Handle an HTTP GET: represent list of users
 	 *
 	 * @param variant
 	 * @return
@@ -50,20 +52,19 @@ public class UsersResource extends ServerResource {
 				for(User o : this.users) {
 					userArray.put(o.toJSON());
 				}
-
 				result = new JsonRepresentation(userArray);
 			} else {
 				// create a plain text representation of our list of users
 				StringBuffer buf = new StringBuffer("<html><head><title>User Resources</title><head><body><h1>User Resources</h1>");
 				buf.append("<form name=\"input\" action=\"/users\" method=\"POST\">");
-				buf.append("User name: ");
-				buf.append("<input type=\"text\" userName=\"User Name\" />");
+				buf.append("User Name: ");
+				buf.append("<input type=\"text\" name=\"userName\" />");
 				buf.append("<br/>Host Address: ");
-				buf.append("<input type=\"text\" host=\"Host Address\" />");
+				buf.append("<input type=\"text\" name=\"host\" />");
 				buf.append("<br/>Port: ");
-				buf.append("<input type=\"text\" port=\"Port\" />");
+				buf.append("<input type=\"text\" name=\"port\" />");
 				buf.append("<br/>Available: ");
-				buf.append("<input type=\"checkbox\" status=\"Available\" />");
+				buf.append("<input type=\"checkbox\" name=\"status\" />");
 				buf.append("<br/>");
 				buf.append("<input type=\"submit\" value=\"Create\" />");
 				buf.append("</form>");
@@ -81,7 +82,7 @@ public class UsersResource extends ServerResource {
 
 
 	/**
-	 * Handle a POST Http request. Create a new user
+	 * Handle a POST Http request: register new user
 	 *
 	 * @param entity
 	 * @throws ResourceException
@@ -92,25 +93,44 @@ public class UsersResource extends ServerResource {
 	{
 		Representation rep = null;
 
-		// We handle only a form request in this example. Other types could be
-		// JSON or XML.
 		try {
 			if (entity.getMediaType().equals(MediaType.APPLICATION_WWW_FORM,
 					true))
 			{
-				// Create user
 				Form form = new Form(entity);
-				User w = new User();
-				w.setUserName(form.getFirstValue("userName"));
-				w.setHost(form.getFirstValue("host"));
-				w.setPort(Integer.parseInt(form.getFirstValue("port")));
-				w.setStatus(Boolean.getBoolean(form.getFirstValue("status")));
-        		ObjectifyService.ofy().save().entity(w).now();
+				User u = new User();
+				u.setUserName(form.getFirstValue("userName"));
+				System.out.println(u.getUserName());
+				u.setHost(form.getFirstValue("host"));
+				System.out.println("Host");
+				String port = form.getFirstValue("port");
+				System.out.println("Got port at leaset:" + port);
+				u.setPort(Integer.parseInt(port));
+				System.out.println("Port");
+				u.setStatus(Boolean.getBoolean(form.getFirstValue("status")));
+				System.out.println("before save");
+        		ObjectifyService.ofy().save().entity(u).now();
 
 				getResponse().setStatus(Status.SUCCESS_OK);
-				rep = new StringRepresentation(w.toHtml(false));
+				rep = new StringRepresentation(u.toHtml(false));
 				rep.setMediaType(MediaType.TEXT_HTML);
+				System.out.println("Before response");
 				getResponse().setEntity(rep);
+
+			} else if (entity.getMediaType().equals(MediaType.APPLICATION_JSON)) {
+				JSONObject json = new JSONObject(entity);
+				User u = new User();
+				u.setUserName(json.getString("userName"));
+				u.setHost(json.getString("host"));
+				u.setPort(json.getInt("port"));
+				u.setStatus(json.getBoolean("status"));
+        		ObjectifyService.ofy().save().entity(u).now();
+
+				getResponse().setStatus(Status.SUCCESS_OK);
+				rep = new StringRepresentation(u.toJSON().toString());
+				rep.setMediaType(MediaType.APPLICATION_JSON);
+				getResponse().setEntity(rep);
+
 			} else {
 				getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
 			}

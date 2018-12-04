@@ -149,7 +149,7 @@ public class User {
 			StringBuffer sb = new StringBuffer();
 			sb.append("<b>User Name:</b> ");
 			sb.append(this.userName);
-			sb.append(" <a href=\"/widgets/" + this.userName + "\">View</a>");
+			sb.append(" <a href=\"/users/" + this.userName + "\">View</a>");
 			sb.append("<br/>");
 			retval = sb.toString();
 		} else {

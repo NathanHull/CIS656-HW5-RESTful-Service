@@ -9,6 +9,6 @@
 <body>
   <h1>Server Engine -- Java 8!</h1>
 
-  <a href="widgets">Widgets</a>
+  <a href="users">Users</a>
 </body>
 </html>
