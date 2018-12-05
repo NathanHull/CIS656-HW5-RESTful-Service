@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.restlet.Client;
 import org.restlet.data.*;
 import org.restlet.*;
-import org.restlet.representation.Representation;
 
 
 public class ChatClient
@@ -27,7 +26,6 @@ public class ChatClient
 	private String userName;
 	private String host;
 	private int port;
-	private int recvPort;
 	private boolean status;
 
 	
@@ -35,10 +33,9 @@ public class ChatClient
 
     public static void main(String args[]) {
 
-
 		// Get args for username and ports
-		if (args.length != 3) {
-			System.err.println("Input error: ./exe userName serverPort recvPort");
+		if (args.length != 2) {
+			System.err.println("Input error: ./exe userName recvPort");
 			System.exit(1);
 		}
 
@@ -46,7 +43,6 @@ public class ChatClient
 		usersResourceURL = baseURL + "/users";
 		client.userName = args[0];
 		client.port = Integer.parseInt(args[1]);
-		client.recvPort = Integer.parseInt(args[2]);
 		client.status = true;
 
 		try {
@@ -61,7 +57,7 @@ public class ChatClient
 		Scanner scanner = new Scanner(System.in);
 		ServerSocket receiveSocket = null;
 		try {
-			receiveSocket = new ServerSocket(client.recvPort);
+			receiveSocket = new ServerSocket(client.port);
 		} catch (IOException e) {
 			System.err.println("Error opening receiving socket");
 			System.exit(1);
@@ -256,6 +252,7 @@ public class ChatClient
 		if (ja != null) {
 			for (int i = 0; i < ja.length(); i++) {
 				list.add(ja.getJSONObject(i));
+				System.out.println(ja.getJSONObject(i).toString());
 			}
 		}
 		return list;
@@ -274,7 +271,8 @@ public class ChatClient
 		form.add("userName", userName);
 		form.add("host", host);
 		form.add("port", ""+port);
-		form.add("status", ""+status);
+		form.add("status", String.valueOf(status));
+		System.out.println(form.toString());
 
 		Request request = new Request(Method.PUT, usersResourceURL + "/" + userName);
 		request.setEntity(form.getWebRepresentation());
