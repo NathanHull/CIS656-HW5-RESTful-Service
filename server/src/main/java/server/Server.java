@@ -1,6 +1,5 @@
 package server;
 
-import java.util.HashMap;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
