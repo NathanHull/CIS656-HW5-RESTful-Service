@@ -47,6 +47,7 @@ public class ChatClient
 		client.userName = args[0];
 		client.port = Integer.parseInt(args[1]);
 		client.recvPort = Integer.parseInt(args[2]);
+		client.status = true;
 
 		try {
 			client.host = InetAddress.getLocalHost().getHostAddress();
