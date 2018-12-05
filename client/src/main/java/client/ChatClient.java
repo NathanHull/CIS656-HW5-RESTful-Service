@@ -67,7 +67,7 @@ public class ChatClient
 
 		
 		// Stub in case user gets left registered
-		// Request request = new Request(Method.DELETE,usersResourceURL + "/brah");
+		// Request request = new Request(Method.DELETE,usersResourceURL + "/hulln");
 		// Response resp = new Client(Protocol.HTTP).handle(request);
 		// System.out.println(resp.getStatus());
 
@@ -96,10 +96,10 @@ public class ChatClient
 
 			switch (userChoice) {
 				case 0:
-					System.out.println("Friends:");
-					System.out.println("---------");
 					ArrayList<JSONObject> userList = client.getUsers();
 					if (userList != null) {
+						System.out.println("Friends:");
+						System.out.println("---------");
 						for (JSONObject o : userList) {
 							if (!o.getString("userName").equals(client.userName)) {
 								System.out.print(o.getString("userName") + " @ " + o.getString("host") + ":" + o.getInt("port") + " - ");
@@ -110,6 +110,8 @@ public class ChatClient
 								}
 							}
 						}
+					} else {
+						System.out.println("No friends");
 					}
 					System.out.println();
 					break;
@@ -129,7 +131,9 @@ public class ChatClient
 					if (target == null) {
 						System.out.println("User does not exist");
 					} else if (target.getBoolean("status")) {
+						System.out.println("\nMessage: ");
 						String message = scanner.nextLine();
+						message = "[" + client.userName + "] " + message;
 						Socket socket = null;
 
 						try {
@@ -162,6 +166,7 @@ public class ChatClient
 					System.out.println("Broadcast message?");
 					scanner.nextLine();
 					String message = scanner.nextLine();
+					message = "[" + client.userName + "] " + message;
 
 					ArrayList<JSONObject> targets = client.getUsers();
 					for (JSONObject t : targets) {
@@ -252,7 +257,6 @@ public class ChatClient
 		if (ja != null) {
 			for (int i = 0; i < ja.length(); i++) {
 				list.add(ja.getJSONObject(i));
-				System.out.println(ja.getJSONObject(i).toString());
 			}
 		}
 		return list;
@@ -272,7 +276,6 @@ public class ChatClient
 		form.add("host", host);
 		form.add("port", ""+port);
 		form.add("status", String.valueOf(status));
-		System.out.println(form.toString());
 
 		Request request = new Request(Method.PUT, usersResourceURL + "/" + userName);
 		request.setEntity(form.getWebRepresentation());
