@@ -88,7 +88,7 @@ public class UserResource extends ServerResource {
 				this.user.setUserName(form.getFirstValue("userName"));
 				this.user.setHost(form.getFirstValue("host"));
 				this.user.setPort(Integer.parseInt(form.getFirstValue("port")));
-				this.user.setStatus(Boolean.getBoolean(form.getFirstValue("status")));
+				this.user.setStatus(Boolean.valueOf(form.getFirstValue("status")));
 
         		ObjectifyService.ofy().save().entity(this.user).now();
 				getResponse().setStatus(Status.SUCCESS_OK);
