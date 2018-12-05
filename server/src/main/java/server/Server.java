@@ -1,5 +1,7 @@
 package server;
 
+import java.util.List;
+
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -9,6 +11,8 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Protocol;
 import org.restlet.Request;
 import org.restlet.Response;
+import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.Key;
 
 
 public class Server extends Application {
@@ -24,6 +28,8 @@ public class Server extends Application {
 		component.getServers().add(Protocol.HTTP, 8100);
 		Server application = new Server();
 		component.getDefaultHost().attach(application);
+		List<Key<User>> keys = ObjectifyService.ofy().load().type(User.class).keys().list();
+		ObjectifyService.ofy().delete().keys(keys).now();
 		component.start();
 	}
 
@@ -35,8 +41,8 @@ public class Server extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
-		router.attach("/users", UsersResource.class);
 		router.attach("/users/{userName}", UserResource.class);
+		router.attach("/users", UsersResource.class);
 
 		Restlet mainpage = new Restlet() {
 			@Override
