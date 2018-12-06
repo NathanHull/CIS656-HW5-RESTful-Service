@@ -21,7 +21,8 @@ import org.restlet.*;
 public class ChatClient
 {
 	// The base URL for all requests.
-	static private String baseURL = "http://localhost:8080";
+	// static private String baseURL = "http://localhost:8080";
+	static private String baseURL = "http://chatserver-224403.appspot.com";
 	static private String usersResourceURL;
 	private String userName;
 	private String host;
